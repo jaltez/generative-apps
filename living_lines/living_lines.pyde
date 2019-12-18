@@ -11,6 +11,7 @@ def setup():
     size(1024, 720)
     smooth()
     frameRate(60)
+    rectMode(CENTER);
 
     # Globals
     global beams, currTime, prevTime
@@ -22,9 +23,7 @@ def setup():
     currTime = prevTime = millis()
 
     for i in xrange(numBeams):
-        # beams.append(Beam(center, angleOffset * i, beamStep))
-        beams.append(Beam(center, radians(360/numBeams) * i, beamStep))
-        # beams.append(Beam(center, radians(45), beamStep))
+        beams.append(Beam(center, angleOffset * i, beamStep))
 
 def draw():
     ### background(0)

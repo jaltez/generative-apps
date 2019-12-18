@@ -9,9 +9,8 @@ class Beam:
         self.currStep = 0
 
         self.seed     = random.uniform(1, 100)
-        # self.initLoc  = PVector(self.origin.x + self.getNoise(0), self.origin.y - self.currStep)
-        self.initLoc  = PVector(self.origin.x - self.getNoise(millis()), self.origin.y)
-        print("initLoc=" + str(self.initLoc))
+        self.offset   = PVector(self.getNoise(millis()), 0)
+
         print("seed=" + str(self.seed))
 
     def getNoise(self, value):
@@ -36,21 +35,23 @@ class Beam:
         
         print("value=" + str(value))
         print("noise=" + str(noise))
-        # print("input: " + str(noise) + " / noise: " + str(noise))
 
         pushMatrix()
-        translate(self.initLoc.x, self.initLoc.y)
-        # rotate(self.angle)
+        translate(self.origin.x, self.origin.y)
+        rotate(radians(self.angle))
+        translate(-self.offset.x, -self.offset.y)
 
+        # Origin line
+        # clr = color(250, 100, 100)
+        # stroke(clr)
+        # fill(clr)
+        # ellipse(0, - self.currStep, 2, 2)
+
+        # Beam
         clr = color(100, 100, 250)
         stroke(clr)
         fill(clr)
         ellipse(noise, - self.currStep, 5, 5)
-
-        clr = color(250, 100, 100)
-        stroke(clr)
-        fill(clr)
-        ellipse(0, - self.currStep, 2, 2)
 
         popMatrix()
 
