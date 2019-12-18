@@ -48,10 +48,12 @@ class Beam:
         # ellipse(0, - self.currStep, 2, 2)
 
         # Beam
-        clr = color(100, 100, 250)
+        clr1 = color(150, 0, 0)
+        clr2 = color(150, 150, 50)
+        clr = lerpColor(clr1, clr2, norm(self.currStep, 0, self.origin.y))
         stroke(clr)
         fill(clr)
-        ellipse(noise, - self.currStep, 5, 5)
+        ellipse(noise, - self.currStep, self.currStep*0.35, self.currStep*0.35)
 
         popMatrix()
 

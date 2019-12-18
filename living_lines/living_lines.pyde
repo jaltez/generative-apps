@@ -1,7 +1,7 @@
 from beam import Beam
 
 numBeams = 5
-beamStep = 1
+beamStep = 2
 currTime = 0
 prevTime = 0
 beams    = []
