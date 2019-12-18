@@ -19,17 +19,6 @@ class Beam:
         return noise( self.seed + value * 0.001 ) * 100
 
     def display(self, value):
-        
-        # Gradient color
-        """
-        clr1 = color(150, 150, 50)
-        clr2 = color(255, 0, 0)
-        clr = lerpColor(clr1, clr2, norm(origin.y, 0, center.y))
-        stroke(clr)
-        fill(clr)
-
-        ellipse(center.x + 150 - i*150 + noise*100, origin.y, 5, 5)
-        """
 
         noise = self.getNoise(value);
         
