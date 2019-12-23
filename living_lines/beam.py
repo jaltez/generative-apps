@@ -2,28 +2,27 @@ import random
 
 class Beam:
 
-    def __init__(self, origin, angle, step=0):
+    def __init__(self, origin, increment, angle, step, size):
         self.origin   = origin
-        self.step     = step
         self.angle    = angle
+        self.step     = step
+        self.size     = size
         self.currStep = 0
 
         self.seed     = random.uniform(1, 100)
-        self.offset   = PVector(self.getNoise(millis()), 0)
-
-        print("seed=" + str(self.seed))
+        self.offset   = PVector(self.getNoise(increment), 0)
+        
+        self.color_ini = color(random.randint(50, 150), random.randint(0, 50), random.randint(0, 50))
+        self.color_end = color(random.randint(50, 150), random.randint(50, 150), random.randint(50, 150))
 
     def getNoise(self, value):
         ### origin = PVector(center.x + currTime/25, center.y - currTime/25)
         ### noiseX = noise(origin.y * 0.01)*2 + noise(origin.y * 0.1)*0.5
         return noise( self.seed + value * 0.001 ) * 100
 
-    def display(self, value):
+    def display(self, increment):
 
-        noise = self.getNoise(value);
-        
-        print("value=" + str(value))
-        print("noise=" + str(noise))
+        noise = self.getNoise(increment);
 
         pushMatrix()
         translate(self.origin.x, self.origin.y)
@@ -37,12 +36,10 @@ class Beam:
         # ellipse(0, - self.currStep, 2, 2)
 
         # Beam
-        clr1 = color(150, 0, 0)
-        clr2 = color(150, 150, 50)
-        clr = lerpColor(clr1, clr2, norm(self.currStep, 0, self.origin.y))
+        clr = lerpColor(self.color_ini, self.color_end, norm(self.currStep, 0, self.origin.y))
         stroke(clr)
         fill(clr)
-        ellipse(noise, - self.currStep, self.currStep*0.35, self.currStep*0.35)
+        ellipse(noise, - self.currStep, self.currStep * self.size/100, self.currStep * self.size/100)
 
         popMatrix()
 
