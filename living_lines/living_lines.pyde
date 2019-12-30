@@ -1,5 +1,6 @@
 import random
 from emitter import Emitter
+from gradient import Gradient
 
 numEmitter = 3
 currTime = 0
@@ -20,6 +21,11 @@ def setup():
     currTime = prevTime = millis()
     margin = 100
 
+    # Background
+    gradient = Gradient()
+    gradient.draw()
+
+    # Emitter create
     for i in xrange(numEmitter):
         x_pos   = random.randint(margin, width - margin)
         y_pos   = random.randint(margin, height - margin)
@@ -27,6 +33,7 @@ def setup():
         emitter = Emitter(origin, getIncrement(0))
         emitters.append(emitter)
 
+    # Emitter draw
     for i in xrange(1000):
         for emitter in emitters:
             emitter.display(getIncrement(i))
