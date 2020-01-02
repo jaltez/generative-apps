@@ -12,9 +12,10 @@ def setup():
     layerInc   = 5
 
     size(1024, 720)
+    background(30, 30, 50)
 
-    color_ini = color(random.randint(50, 250), random.randint(100, 150), random.randint(100, 150))
-    color_end = color(random.randint(50, 250), random.randint(50, 250), random.randint(50, 250))
+    color_ini = color(random.randint(150, 250), random.randint(100, 150), random.randint(100, 150))
+    color_end = color(random.randint(50, 150), random.randint(50, 150), random.randint(50, 150))
 
     center = PVector(width/2, height/2)
     for i in xrange(numLayers):
@@ -23,16 +24,21 @@ def setup():
         # print("angleStep: " + str(angleStep))
         # print("\n")
         angleOffset = random.randint(0, 45)
+        ii = i+1.0
         for j in xrange(numItems):
-            #pos = PVector.fromAngle(radians((angleStep+angleOffset) * j)) * layerDist * (i+1) # >>>>>>>>>>>>>>>> INTERESTING
+            #pos = PVector.fromAngle(radians((angleStep+angleOffset) * j)) * layerDist * ii # >>>>>>>>>>>>>>>> INTERESTING
 
-            pos = PVector.fromAngle(radians(angleStep * j + angleOffset)) * (firstLayer + (layerDist * (i+1)))
+            pos = PVector.fromAngle(radians(angleStep * j + angleOffset)) * (firstLayer + (layerDist * ii))
             pos += center
 
             layerJump = 5 if random.uniform(0, 1) > 0.9 else 0
-            c = lerpColor(color_ini, color_end, (i+1.0) / (numLayers + layerJump))
+            amt = ii / (numLayers + layerJump) # Inverse of layers + extra random
+            c = lerpColor(color_ini, color_end, amt)
+            
+            stroke(c)
             fill(c)
-            ellipse(pos.x, pos.y, 10 + i*0.5, 10 + i*0.5)
+            ellipseSize = 10 + i*0.5
+            ellipse(pos.x, pos.y, ellipseSize, ellipseSize)
             
             # fill(0)
             # textSize(10);
