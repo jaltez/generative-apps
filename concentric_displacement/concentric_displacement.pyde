@@ -11,6 +11,7 @@ def setup():
     layerDist  = 10
     layerInc   = 5
     numColors  = 3 #min=2
+    lineFactor = 0.01
     
     layerJumpFactor    = 0.9
     gradientJumpFactor = 0.9
@@ -26,6 +27,8 @@ def setup():
     colorIndex = 0
     colorCount = 0
     colorStep  = float(numLayers) / len(colors)
+
+    lineStack = []
 
     center  = PVector(width/2, height/2)
     for i in xrange(numLayers):
@@ -64,7 +67,20 @@ def setup():
             ellipseSize = i*0.5 + noise(i, j)*15
             ellipse(pos.x, pos.y, ellipseSize, ellipseSize)
 
+            if lineFactor:
+                if random.uniform(0, 1) < lineFactor:
+                    lineStack.append(pos)
+
+
         numItems += layerInc
+
+    if len(lineStack) > 1:
+        for i in xrange(1, len(lineStack)):
+            prev = lineStack[i-1]
+            curr = lineStack[i]
+            stroke(255);
+            line(prev.x, prev.y, curr.x, curr.y)
+            
     
 def draw():
     pass
