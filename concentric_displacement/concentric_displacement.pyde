@@ -1,17 +1,13 @@
 import random
 
-
 def setup():
-    # CIRCUNFERENCIAS CONCÉNTRICAS DE OBJETOS CON RUIDO DE POSICIÓN AL ALEJARSE DEL CENTRO
-    # BASADO EN https://image.shutterstock.com/z/stock-vector-big-data-information-vector-concept-abstract-futuristic-background-with-d-visualization-1017906883.jpg
-
     numItems   = 20
     numLayers  = 30
     firstLayer = 50
     layerDist  = 10
     layerInc   = 5
     numColors  = 3 #min=2
-    lineFactor = 0.01
+    lineSkipFactor = 0.25
     
     layerJumpFactor    = 0.9
     gradientJumpFactor = 0.9
@@ -29,10 +25,12 @@ def setup():
     colorStep  = float(numLayers) / len(colors)
 
     lineStack = []
+    lineOrigins = [0, 10, 19]
+    lineStack = [[] for i in lineOrigins]
+    lineItem = random.randint(0, numItems-1)
 
     center  = PVector(width/2, height/2)
     for i in xrange(numLayers):
-
         # Gradient color nodes
         colorCount += 1
         if colorCount > colorStep:
@@ -42,9 +40,11 @@ def setup():
         # Layer alpha
         layerAlpha = int(lerp(0, 255, 1-(i+1.0)/numLayers))
         
+        # Angles
         angleStep = 360.0 / numItems
-        angleOffset = random.randint(0, 45)
+        angleOffset = random.randint(0, 25)
 
+        # Items
         ii = i+1.0
         for j in xrange(numItems):
             # Randoms
@@ -67,19 +67,23 @@ def setup():
             ellipseSize = i*0.5 + noise(i, j)*15
             ellipse(pos.x, pos.y, ellipseSize, ellipseSize)
 
-            if lineFactor:
-                if random.uniform(0, 1) < lineFactor:
-                    lineStack.append(pos)
-
+            # Radial lines
+            if random.uniform(0, 1) > lineSkipFactor:
+                for idx, orig in enumerate(lineOrigins):
+                    if j == orig:
+                        lineStack[idx].append(pos)
+                        fill(255, 255, 255);
+                        text(j, pos.x-3, pos.y+3)
 
         numItems += layerInc
 
-    if len(lineStack) > 1:
-        for i in xrange(1, len(lineStack)):
-            prev = lineStack[i-1]
-            curr = lineStack[i]
-            stroke(255);
-            line(prev.x, prev.y, curr.x, curr.y)
+    for linePositions in lineStack:
+        if len(linePositions) > 1:
+            for i in xrange(1, len(linePositions)):
+                prev = linePositions[i-1]
+                curr = linePositions[i]
+                stroke(255);
+                line(prev.x, prev.y, curr.x, curr.y)
             
     
 def draw():
