@@ -25,7 +25,7 @@ def setup():
     colorStep  = float(numLayers) / len(colors)
 
     lineStack = []
-    lineOrigins = [0, 10, 19]
+    lineOrigins = [0, 6, 15]
     lineStack = [[] for i in lineOrigins]
     lineItem = random.randint(0, numItems-1)
 
@@ -39,10 +39,10 @@ def setup():
 
         # Layer alpha
         layerAlpha = int(lerp(0, 255, 1-(i+1.0)/numLayers))
-        
+
         # Angles
         angleStep = 360.0 / numItems
-        angleOffset = random.randint(0, 25)
+        angleOffset = random.randint(0, 10)
 
         # Items
         ii = i+1.0
@@ -72,19 +72,30 @@ def setup():
                 for idx, orig in enumerate(lineOrigins):
                     if j == orig:
                         lineStack[idx].append(pos)
-                        fill(255, 255, 255);
-                        text(j, pos.x-3, pos.y+3)
+                        # fill(255, 255, 255);
+                        # text(j, pos.x-3, pos.y+3)
 
         numItems += layerInc
 
+        lineOrigins = [orig+(pos*2) for pos, orig in enumerate(lineOrigins)]
+
     for linePositions in lineStack:
-        if len(linePositions) > 1:
-            for i in xrange(1, len(linePositions)):
+        numPositions = len(linePositions)
+        if numPositions > 1:
+            stroke(color(0, 0, 0, 150))
+            blendMode(MULTIPLY);
+            for i in xrange(1, numPositions):
+                strokeWeight(i)
                 prev = linePositions[i-1]
                 curr = linePositions[i]
-                stroke(255);
+                
+                layerAlpha = int(lerp(0, 255, 1-(i+1.0)/numPositions))
+                c = color(255, 255, 255, 1)
+                c = (c & 0xffffff) | (layerAlpha << 24) # Left bit shifting for changing alpha     
+
+                
+
                 line(prev.x, prev.y, curr.x, curr.y)
-            
-    
+
 def draw():
     pass
