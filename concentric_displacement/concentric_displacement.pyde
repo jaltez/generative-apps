@@ -1,101 +1,102 @@
 import random
 
 def setup():
-    numItems   = 20
-    numLayers  = 30
-    firstLayer = 50
-    layerDist  = 10
-    layerInc   = 5
-    numColors  = 3 #min=2
-    lineSkipFactor = 0.25
-    
-    layerJumpFactor    = 0.9
-    gradientJumpFactor = 0.9
+    # Switches
+    opt_draw_lines = True # draws lines from center to edge
 
-    size(1600, 900)
-    background(30, 30, 50)
+    # Parameters
+    opt_num_items   = 20
+    opt_num_layers  = 30
+    opt_first_layer = 50
+    opt_layer_dist  = 10
+    opt_layer_inc   = 5
+    opt_num_colors  = 3 # min=2
+        
+    opt_layer_jump_factor    = 0.9
+    opt_gradient_jump_factor = 0.9
 
     colors = []
-    for i in xrange(numColors):
+    for i in xrange(opt_num_colors):
         c = color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         colors.append(c)
 
-    colorIndex = 0
-    colorCount = 0
-    colorStep  = float(numLayers) / len(colors)
+    color_index = 0
+    color_count = 0
+    color_step  = float(opt_num_layers) / len(colors)
 
-    lineStack = []
-    lineOrigins = [0, 6, 15]
-    lineStack = [[] for i in lineOrigins]
-    lineItem = random.randint(0, numItems-1)
+    if opt_draw_lines:
+        opt_line_skip_factor = 0.25
+        opt_line_origins     = [0, 6, 15]
+        line_stack           = [[] for i in opt_line_origins]
+    
+    # Init
+    size(1600, 900)
+    background(30, 30, 50)
 
-    center  = PVector(width/2, height/2)
-    for i in xrange(numLayers):
+    # Main loop
+    num_items = opt_num_items
+    center    = PVector(width/2, height/2)
+    for i in xrange(opt_num_layers):
         # Gradient color nodes
-        colorCount += 1
-        if colorCount > colorStep:
-            colorCount = 0
-            colorIndex += 1
+        color_count += 1
+        if color_count > color_step:
+            color_count = 0
+            color_index += 1
 
         # Layer alpha
-        layerAlpha = int(lerp(0, 255, 1-(i+1.0)/numLayers))
+        layer_alpha = int(lerp(0, 255, 1-(i+1.0)/opt_num_layers))
 
         # Angles
-        angleStep = 360.0 / numItems
-        angleOffset = random.randint(0, 10)
+        angle_step   = 360.0 / num_items
+        angle_offset = random.randint(0, 10)
 
         # Items
         ii = i+1.0
-        for j in xrange(numItems):
+        for j in xrange(num_items):
             # Randoms
-            layerJump    = 5 if random.uniform(0, 1) > layerJumpFactor else 0
-            gradientJump = 1 if random.uniform(0, 1) > gradientJumpFactor else 0
-            randAlpha    = random.randint(0, ii*2)
+            layer_jump    = 5 if random.uniform(0, 1) > opt_layer_jump_factor else 0
+            gradient_jump = 1 if random.uniform(0, 1) > opt_gradient_jump_factor else 0
+            rand_alpha    = random.randint(0, ii*2)
 
             # Color calculation
-            amt = ii / (numLayers + layerJump) # Inverse of layers + extra random
-            c = lerpColor(colors[colorIndex-1+gradientJump], colors[colorIndex], amt)
-            c = (c & 0xffffff) | (layerAlpha+randAlpha << 24) # Left bit shifting for changing alpha            
+            amt = ii / (opt_num_layers + layer_jump) # Inverse of layers + extra random
+            c = lerpColor(colors[color_index-1 + gradient_jump], colors[color_index], amt)
+            c = (c & 0xffffff) | (layer_alpha + rand_alpha << 24) # Left bit shifting for changing alpha            
 
             # Position
-            pos = PVector.fromAngle(radians(angleStep * j + angleOffset)) * (firstLayer + (layerDist * pow(ii, 1.25)))
+            pos = PVector.fromAngle(radians(angle_step * j + angle_offset)) * (opt_first_layer + (opt_layer_dist * pow(ii, 1.25)))
             pos += center
 
             # Draw
             stroke(c)
             fill(c)
-            ellipseSize = i*0.5 + noise(i, j)*15
-            ellipse(pos.x, pos.y, ellipseSize, ellipseSize)
+            ellipse_size = i*0.5 + noise(i, j)*15
+            ellipse(pos.x, pos.y, ellipse_size, ellipse_size)
 
             # Radial lines
-            if random.uniform(0, 1) > lineSkipFactor:
-                for idx, orig in enumerate(lineOrigins):
+            if opt_draw_lines and random.uniform(0, 1) > opt_line_skip_factor:
+                for idx, orig in enumerate(opt_line_origins):
                     if j == orig:
-                        lineStack[idx].append(pos)
-                        # fill(255, 255, 255);
-                        # text(j, pos.x-3, pos.y+3)
+                        line_stack[idx].append(pos)
 
-        numItems += layerInc
+        num_items += opt_layer_inc
 
-        lineOrigins = [orig+(pos*2) for pos, orig in enumerate(lineOrigins)]
+        # Increment position for next line point
+        if opt_draw_lines:
+            opt_line_origins = [orig+(pos*2) for pos, orig in enumerate(opt_line_origins)]
 
-    for linePositions in lineStack:
-        numPositions = len(linePositions)
-        if numPositions > 1:
-            stroke(color(0, 0, 0, 150))
-            blendMode(MULTIPLY);
-            for i in xrange(1, numPositions):
-                strokeWeight(i)
-                prev = linePositions[i-1]
-                curr = linePositions[i]
-                
-                layerAlpha = int(lerp(0, 255, 1-(i+1.0)/numPositions))
-                c = color(255, 255, 255, 1)
-                c = (c & 0xffffff) | (layerAlpha << 24) # Left bit shifting for changing alpha     
-
-                
-
-                line(prev.x, prev.y, curr.x, curr.y)
+    # Draw lines
+    if opt_draw_lines:
+        stroke(color(0, 0, 0, 150))
+        blendMode(MULTIPLY);
+        for line_positions in line_stack:
+            num_positions = len(line_positions)
+            if num_positions > 1:
+                for i in xrange(1, num_positions):
+                    prev = line_positions[i-1]
+                    curr = line_positions[i]
+                    strokeWeight(i)
+                    line(prev.x, prev.y, curr.x, curr.y)
 
 def draw():
     pass
